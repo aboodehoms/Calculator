@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scientific Calculator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #dde1e5; /* Main background color from image */
+            font-family: 'Segoe UI', 'Inter', sans-serif;
+            background-color: #f5f5f5; /* A neutral background to make the calculator pop */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -17,395 +20,395 @@
             padding: 1rem;
             box-sizing: border-box;
         }
-        .calculator-container {
-            background-color: #ffffff;
-            border-radius: 0.25rem; /* Very subtle rounding */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            padding: 1rem; /* Adjusted padding to match image */
+        .calculator-wrapper {
+            background-color: #f0f0f0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             width: 100%;
-            max-width: 580px; /* Wider to match image aspect ratio */
+            max-width: 620px; /* Adjusted to match image aspect ratio */
             box-sizing: border-box;
-            border: 1px solid #c9c9c9; /* Subtle grey border around container */
+            border: 1px solid #a0a0a0;
+            margin: 1rem auto; /* Added margin for centering and spacing */
         }
-        .display-area {
-            background-color: #eaf1f4; /* Light blue-grey from image */
-            border-radius: 0.1rem; /* Almost sharp corners for display */
-            padding: 0.5rem 0.75rem;
-            text-align: right;
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin-bottom: 0.75rem;
-            overflow-x: auto;
-            white-space: nowrap;
-            color: #333;
-            min-height: 50px;
+        .calculator-container {
+            padding: 1rem;
+        }
+        .top-bar {
             display: flex;
+            justify-content: space-between;
             align-items: flex-end;
-            justify-content: flex-end;
-            border: 1px solid #c9c9c9; /* Subtle border for display */
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid #a0a0a0;
+            flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+            gap: 0.5rem; /* Gap between items when wrapped */
+        }
+        .mode-tabs {
+            display: flex;
+            flex-wrap: wrap; /* Allow tabs to wrap */
+        }
+        .mode-tab {
+            padding: 0.4rem 0.8rem;
+            cursor: pointer;
+            color: #333;
+            font-weight: 500;
+            border: 1px solid #a0a0a0;
+            background-color: #e1e1e1;
+            margin-bottom: -1px; /* Pulls tab down to overlap the container border */
+            border-bottom: 1px solid #a0a0a0;
+        }
+        .mode-tab.active {
+            background-color: #f0f0f0; /* Active tab matches wrapper bg */
+            border-bottom: none; /* Key change for blending effect */
+        }
+        .digit-grouping {
+            background-color: #4472c4;
+            color: #ffffff;
+            padding: 0.5rem 1rem;
+            border-radius: 0.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid #3b63a9;
+            white-space: nowrap; /* Prevent text wrapping */
         }
         .input-history {
             min-height: 1.25rem;
-            font-size: 0.8rem; /* Smaller font for history */
-            color: #888;
+            font-size: 0.8rem;
+            color: #666;
             text-align: right;
             margin-bottom: 0.25rem;
         }
+        .display-area {
+            background-color: #ffffff;
+            border-radius: 0.1rem;
+            padding: 0.5rem 0.75rem;
+            text-align: right;
+            font-size: 2.5rem; /* Base font size */
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            overflow-x: auto;
+            white-space: nowrap;
+            color: #000;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            border: 1px solid #a0a0a0;
+        }
         .button-grid {
             display: grid;
-            gap: 0.2rem; /* Very small gap between buttons */
+            gap: 0.25rem;
         }
         .button {
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 0.6rem 0.4rem;
-            border-radius: 0.1rem; /* Almost sharp corners for buttons */
-            font-size: 1.05rem; /* Fine-tuned font size */
-            font-weight: 500;
+            border-radius: 0.1rem;
+            font-size: 1rem;
+            font-weight: 400;
             cursor: pointer;
-            transition: background-color 0.1s, transform 0.05s;
             user-select: none;
             min-height: 48px;
-            border: 1px solid #c9c9c9; /* Subtle grey border for all buttons */
-            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05); /* Very subtle inset shadow */
+            border: 1px solid #a0a0a0;
+            transition: filter 0.1s;
         }
         .button:active {
-            transform: scale(0.98);
-            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            filter: brightness(0.9);
         }
-
         /* Specific Button Colors and Styles - EXACT MATCHING */
-        .button.digit, .button.dot {
-            background-color: #ffffff;
-            color: #374151;
+        .button.digit {
+            background-color: #fafafa;
+            color: #000000;
+            font-weight: 600; /* Bolder numbers */
         }
-        .button.digit:hover, .button.dot:hover {
-            background-color: #f0f0f0;
+        .button.dot {
+            background-color: #fafafa;
+            color: #000000;
+            font-weight: 600;
         }
-
         .button.operator {
-            background-color: #2ab88a; /* Green from image */
+            background-color: #92d050;
             color: #ffffff;
         }
-        .button.operator:hover {
-            background-color: #229973;
-        }
-
         .button.clear, .button.back-btn, .button.ce {
-            background-color: #e54c4c; /* Red from image */
+            background-color: #d9534f;
             color: #ffffff;
         }
-        .button.clear:hover, .button.back-btn:hover, .button.ce:hover {
-            background-color: #c94040;
-        }
-
         .button.memory, .button.function {
-            background-color: #f3f4f6; /* Very light grey from image, distinct from white */
-            color: #5c6773; /* Darker grey text */
+            background-color: #e9e9e9;
+            color: #000000;
         }
-        .button.memory:hover, .button.function:hover {
-            background-color: #e2e8f0;
-        }
-
         .button.equals {
-            background-color: #3b82f6; /* Blue from image */
+            background-color: #4472c4;
             color: #ffffff;
         }
-        .button.equals:hover {
-            background-color: #2563eb;
-        }
-
         .button.copy {
-            background-color: #fcd34d; /* Yellow from image */
-            color: #8c5a00;
-            grid-column: span 3;
-            border: 1px solid #c9c9c9; /* Apply border to copy button as well */
-        }
-        .button.copy:hover {
-            background-color: #fbbf24;
-        }
-
-        .mode-tabs {
-            display: flex;
-            margin-bottom: 0.75rem;
-            gap: 0.25rem; /* Small gap between tabs */
-        }
-        .mode-tab {
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.1rem; /* Almost sharp corners */
-            cursor: pointer;
-            background-color: #e5e7eb; /* Inactive tab background */
-            color: #4b5563;
-            font-weight: 500;
-            border: 1px solid #c9c9c9; /* Border for inactive tabs */
-        }
-        .mode-tab.active {
-            background-color: #ffffff; /* Active tab is white */
-            color: #4b5563; /* Text color remains the same */
-            border-color: #c9c9c9; /* Border color remains the same for active tab */
-            border-bottom-color: #ffffff; /* Hide bottom border to merge with calculator */
-            position: relative;
-            z-index: 1; /* Bring active tab slightly forward */
-        }
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.75rem;
-            border-bottom: 1px solid #c9c9c9; /* Border below tabs */
-        }
-        .digit-grouping {
-            background-color: #3b82f6; /* Blue from image */
-            color: #ffffff;
-            padding: 0.4rem 0.8rem;
-            border-radius: 0.1rem; /* Almost sharp corners */
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid #c9c9c9;
-            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05);
-        }
-        .digit-grouping:hover {
-            background-color: #2563eb;
+            background-color: #e6e0b3;
+            color: #000000;
+            grid-column: span 11; /* Default for larger screens */
+            margin-bottom: 0.25rem;
         }
         .radian-mode-buttons {
             display: flex;
-            gap: 0.2rem; /* Small gap */
-            grid-column: span 3; /* Radian buttons span 3 columns */
+            gap: 0.25rem;
+            grid-column: span 3; /* Default for larger screens */
         }
         .radian-mode-button {
             flex: 1;
             padding: 0.4rem 0.6rem;
-            border-radius: 0.1rem; /* Almost sharp corners */
             cursor: pointer;
-            background-color: #f3f4f6; /* Very light grey from image */
-            color: #5c6773;
-            font-weight: 500;
+            background-color: #e9e9e9;
+            color: #000000;
+            font-weight: 400;
             text-align: center;
-            border: 1px solid #c9c9c9;
-            box-shadow: inset 0 -1px 0 rgba(0,0,0,0.05);
+            border: 1px solid #a0a0a0;
+            transition: filter 0.1s;
+        }
+        .radian-mode-button:active {
+            filter: brightness(0.9);
         }
         .radian-mode-button.active {
-            background-color: #3b82f6; /* Blue from image */
-            color: #ffffff;
-            border-color: #3b82f6;
+            background-color: #cccccc; /* Correct grey for active state */
+            border-color: #a0a0a0;
         }
-
-        /* Utility for hiding elements */
         .hidden {
             display: none !important;
         }
-
-        /* Basic Mode specific layout adjustments */
-        #basic-button-grid {
-            grid-template-columns: repeat(6, 1fr); /* 6 columns for basic mode */
-        }
-        #basic-button-grid .button.basic-col-span-2 {
-            grid-column: span 2;
-        }
-
-        /* Scientific Mode specific layout adjustments */
         #scientific-button-grid {
-            grid-template-columns: repeat(11, 1fr); /* 11 columns for scientific mode */
-        }
-        #scientific-button-grid .button {
-            /* General button styling, but specific overrides for scientific */
+            grid-template-columns: repeat(11, 1fr); /* Base for larger screens */
         }
         #scientific-button-grid .button.col-span-2 {
-            grid-column: span 2;
+            grid-column: span 2; /* Base for larger screens */
         }
-        #scientific-button-grid .button.col-span-3 {
-            grid-column: span 3;
-        }
-        #scientific-button-grid .button.col-span-4 {
-            grid-column: span 4;
-        }
-
-        /* Modals for alerts/confirms */
+        /* Modal for alerts */
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: flex; justify-content: center; align-items: center;
             z-index: 1000;
         }
         .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 0.75rem;
+            background: white; padding: 2rem; border-radius: 0.5rem;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            max-width: 90%;
+            text-align: center; max-width: 90%;
         }
-        .modal-buttons {
-            margin-top: 1.5rem;
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-        }
+        .modal-buttons { margin-top: 1.5rem; }
         .modal-button {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.2s;
+            padding: 0.5rem 1.5rem; border-radius: 0.25rem; cursor: pointer;
+            font-weight: bold; border: 1px solid #999; background-color: #eee;
         }
-        .modal-button.confirm {
-            background-color: #3b82f6;
-            color: white;
+
+        /* --- Responsive Adjustments --- */
+
+        /* Tablets and smaller desktops */
+        @media (max-width: 768px) {
+            .calculator-wrapper {
+                max-width: 500px;
+                padding: 0.75rem;
+            }
+            .calculator-container {
+                padding: 0.75rem;
+            }
+            .display-area {
+                font-size: 2rem; /* Slightly smaller on tablets */
+                min-height: 45px;
+            }
+            .button {
+                font-size: 0.9rem;
+                min-height: 45px;
+                padding: 0.5rem 0.3rem;
+            }
+            .mode-tab {
+                padding: 0.3rem 0.6rem;
+            }
+            .digit-grouping {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            /* Adjust column spans if needed for a 9-column layout for example */
+            #scientific-button-grid {
+                grid-template-columns: repeat(9, 1fr); /* Adjust for more compact layout */
+            }
+            .button.copy {
+                grid-column: span 9; /* Adjust copy button span */
+            }
+            .button.function[data-value="x^2"],
+            .button.function[data-value="x^3"],
+            .button.function[data-value="e"],
+            .button.function[data-value="exp"],
+            .button.function[data-value="ln"],
+            .button.function[data-value="log"],
+            .button.function[data-value="!"],
+            .button.function[data-value="ex"],
+            .button.function[data-value="("],
+            .button.function[data-value=")"],
+            .button.function[data-value="cos"],
+            .button.function[data-value="cosh"],
+            .button.function[data-value="tan"],
+            .button.function[data-value="tanh"],
+            .button.function[data-value="inv"],
+            .button.function[data-value="sin"],
+            .button.function[data-value="sinh"]
+            {
+                 /* These buttons now take 1 column in a 9-column grid */
+                grid-column: span 1;
+            }
+            .button.col-span-2 {
+                grid-column: span 2; /* Maintain for '0' in a new context */
+            }
+            .radian-mode-buttons {
+                grid-column: span 3; /* Still span 3 of the 9 columns */
+            }
         }
-        .modal-button.confirm:hover {
-            background-color: #2563eb;
-        }
-        .modal-button.cancel {
-            background-color: #ef4444;
-            color: white;
-        }
-        .modal-button.cancel:hover {
-            background-color: #dc2626;
+
+        /* Mobile devices */
+        @media (max-width: 480px) {
+            body {
+                padding: 0.5rem;
+            }
+            .calculator-wrapper {
+                max-width: 100%;
+                margin: 0.5rem auto;
+                padding: 0.5rem;
+            }
+            .calculator-container {
+                padding: 0.5rem;
+            }
+            .display-area {
+                font-size: 1.8rem; /* Even smaller for phones */
+                min-height: 40px;
+                padding: 0.4rem 0.6rem;
+            }
+            .input-history {
+                font-size: 0.7rem;
+            }
+            .button {
+                font-size: 0.85rem;
+                min-height: 40px;
+                padding: 0.4rem 0.2rem;
+            }
+            .mode-tab {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.85rem;
+            }
+            .digit-grouping {
+                padding: 0.3rem 0.6rem;
+                font-size: 0.85rem;
+            }
+            #scientific-button-grid {
+                grid-template-columns: repeat(7, 1fr); /* More compact for very small screens */
+            }
+            .button.copy {
+                grid-column: span 7; /* Adjust copy button span */
+            }
+            .button.col-span-2 {
+                grid-column: span 2; /* Adjust '0' button for 7 columns */
+            }
+            .radian-mode-buttons {
+                grid-column: span 3; /* Adjust radian buttons for 7 columns, might need further refinement for a better fit */
+            }
+             /* Further adjustments for buttons to ensure visibility and touchability */
+            .button.function,
+            .button.memory,
+            .button.operator,
+            .button.clear,
+            .button.back-btn,
+            .button.ce,
+            .button.digit,
+            .button.dot,
+            .button.equals {
+                grid-column: span 1; /* All single-column buttons take 1 span */
+            }
         }
     </style>
 </head>
 <body>
-    <div class="calculator-container">
-        <!-- Top Bar: Tabs and Digit Grouping -->
-        <div class="top-bar">
-            <div class="mode-tabs">
-                <div class="mode-tab active" id="basic-tab">Basic</div>
-                <div class="mode-tab" id="scientific-tab">Scientific</div>
+    <div class="calculator-wrapper">
+        <div class="calculator-container">
+            <div class="top-bar">
+                <div class="mode-tabs">
+                    <div class="mode-tab" id="basic-tab">Basic</div>
+                    <div class="mode-tab active" id="scientific-tab">Scientific</div>
+                </div>
+                <div class="digit-grouping">Digit Grouping</div>
             </div>
-            <div class="digit-grouping">Digit Grouping</div>
-        </div>
 
-        <!-- Display Area -->
-        <div class="input-history" id="input-history"></div>
-        <div class="display-area" id="display">0</div>
+            <div class="input-history" id="input-history"></div>
+            <div class="display-area" id="display">0</div>
+            
+            <div id="button-grids-container">
+                <div id="basic-button-grid" class="button-grid hidden"></div>
 
-        <!-- Copy Button (always visible, spans 3 columns, always 3 columns wide in both modes) -->
-        <div class="button-grid mb-3" style="grid-template-columns: repeat(3, 1fr);">
-            <div class="button copy" id="copy-button">Copy</div>
-        </div>
+                <div id="scientific-button-grid" class="button-grid">
+                    <div class="button copy" id="copy-button">Copy</div>
 
-        <!-- Basic Mode Button Grid -->
-        <div id="basic-button-grid" class="button-grid">
-            <!-- Row 1: MC, C, Backspace, CE, % (5 columns) -->
-            <div class="button memory" data-value="mc">MC</div>
-            <div class="button clear" data-value="c">C</div>
-            <div class="button back-btn" data-value="back">Backspace</div>
-            <div class="button ce" data-value="ce">CE</div>
-            <div class="button operator" data-value="%">%</div>
+                    <div class="button function" data-value="1/x">¹/ₓ</div>
+                    <div class="button memory" data-value="pm">±</div>
+                    <div class="button memory" data-value="mc">MC</div>
+                    <div class="button memory" data-value="mr">MR</div>
+                    <div class="button memory" data-value="ms">MS</div>
+                    <div class="button memory" data-value="m+">M+</div>
+                    <div class="button memory" data-value="m-">M-</div>
+                    <div class="button clear" data-value="c">C</div>
+                    <div class="button back-btn" data-value="back">Back</div>
+                    <div class="button ce" data-value="ce">CE</div>
+                    <div class="button operator" data-value="%">%</div>
 
-            <!-- Row 2: MR, √, 7, 8, 9, ÷ (6 columns) -->
-            <div class="button memory" data-value="mr">MR</div>
-            <div class="button function" data-value="sqrt">√</div>
-            <div class="button digit" data-value="7">7</div>
-            <div class="button digit" data-value="8">8</div>
-            <div class="button digit" data-value="9">9</div>
-            <div class="button operator" data-value="/">÷</div>
+                    <div class="button function" data-value="sqrt">√</div>
+                    <div class="button function" data-value="cbrt">∛</div>
+                    <div class="button function" data-value="x^2">x²</div>
+                    <div class="button function" data-value="x^3">x³</div>
+                    <div class="button function" data-value="x^y">xʸ</div>
+                    <div class="button function" data-value="e">e</div>
+                    <div class="button digit" data-value="7">7</div>
+                    <div class="button digit" data-value="8">8</div>
+                    <div class="button digit" data-value="9">9</div>
+                    <div class="button operator" data-value="/">÷</div>
 
-            <!-- Row 3: MS, ±, 4, 5, 6, × (6 columns) -->
-            <div class="button memory" data-value="ms">MS</div>
-            <div class="button memory" data-value="pm">±</div>
-            <div class="button digit" data-value="4">4</div>
-            <div class="button digit" data-value="5">5</div>
-            <div class="button digit" data-value="6">6</div>
-            <div class="button operator" data-value="*">×</div>
+                    <div class="button function" data-value="pi">π</div>
+                    <div class="button function" data-value="exp">Exp</div>
+                    <div class="button function" data-value="ln">ln</div>
+                    <div class="button function" data-value="log">log</div>
+                    <div class="button function" data-value="!">n!</div>
+                    <div class="button function" data-value="ex">eˣ</div>
+                    <div class="button digit" data-value="4">4</div>
+                    <div class="button digit" data-value="5">5</div>
+                    <div class="button digit" data-value="6">6</div>
+                    <div class="button operator" data-value="*">×</div>
 
-            <!-- Row 4: M+, 1/x, 1, 2, 3, - (6 columns) -->
-            <div class="button memory" data-value="m+">M+</div>
-            <div class="button function" data-value="1/x">1/x</div>
-            <div class="button digit" data-value="1">1</div>
-            <div class="button digit" data-value="2">2</div>
-            <div class="button digit" data-value="3">3</div>
-            <div class="button operator" data-value="-">-</div>
+                    <div class="button function" data-value="(">(</div>
+                    <div class="button function" data-value=")">)</div>
+                    <div class="button function" data-value="cos">cos</div>
+                    <div class="button function" data-value="cosh">cosh</div>
+                    <div class="button function" data-value="tan">tan</div>
+                    <div class="button function" data-value="tanh">tanh</div>
+                    <div class="button digit" data-value="1">1</div>
+                    <div class="button digit" data-value="2">2</div>
+                    <div class="button digit" data-value="3">3</div>
+                    <div class="button operator" data-value="-">-</div>
 
-            <!-- Row 5: M-, 0 (span 2), ., =, + (6 columns) -->
-            <div class="button memory" data-value="m-">M-</div>
-            <div class="button basic-col-span-2 digit" data-value="0">0</div>
-            <div class="button dot" data-value=".">.</div>
-            <div class="button equals" data-value="=">=</div>
-            <div class="button operator" data-value="+">+</div>
-        </div>
-
-        <!-- Scientific Mode Button Grid -->
-        <div id="scientific-button-grid" class="button-grid hidden">
-            <!-- Row 1: 1/x, ±, MC, MR, MS, M+, M-, C, Back, CE, % (11 columns) -->
-            <div class="button function" data-value="1/x">1/x</div>
-            <div class="button memory" data-value="pm">±</div>
-            <div class="button memory" data-value="mc">MC</div>
-            <div class="button memory" data-value="mr">MR</div>
-            <div class="button memory" data-value="ms">MS</div>
-            <div class="button memory" data-value="m+">M+</div>
-            <div class="button memory" data-value="m-">M-</div>
-            <div class="button clear" data-value="c">C</div>
-            <div class="button back-btn" data-value="back">Back</div>
-            <div class="button ce" data-value="ce">CE</div>
-            <div class="button operator" data-value="%">%</div>
-
-            <!-- Row 2: √, ∛, x², x³, xʸ, e, 7, 8, 9, ÷ (10 columns, with e spanning to cover the 11th) -->
-            <div class="button function" data-value="sqrt">√</div>
-            <div class="button function" data-value="cbrt">∛</div>
-            <div class="button function" data-value="x^2">x²</div>
-            <div class="button function" data-value="x^3">x³</div>
-            <div class="button function" data-value="x^y">xʸ</div>
-            <div class="button function" data-value="e">e</div>
-            <div class="button digit" data-value="7">7</div>
-            <div class="button digit" data-value="8">8</div>
-            <div class="button digit" data-value="9">9</div>
-            <div class="button operator" data-value="/">÷</div>
-
-            <!-- Row 3: π, Exp, ln, log, n!, eˣ, 4, 5, 6, × (10 columns, with eˣ spanning to cover the 11th) -->
-            <div class="button function" data-value="pi">π</div>
-            <div class="button function" data-value="exp">Exp</div>
-            <div class="button function" data-value="ln">ln</div>
-            <div class="button function" data-value="log">log</div>
-            <div class="button function" data-value="!">n!</div>
-            <div class="button function" data-value="ex">eˣ</div>
-            <div class="button digit" data-value="4">4</div>
-            <div class="button digit" data-value="5">5</div>
-            <div class="button digit" data-value="6">6</div>
-            <div class="button operator" data-value="*">×</div>
-
-            <!-- Row 4: (, ), cos, cosh, tan, tanh, 1, 2, 3, - (10 columns, with tanh spanning to cover the 11th) -->
-            <div class="button function" data-value="(">(</div>
-            <div class="button function" data-value=")">)</div>
-            <div class="button function" data-value="cos">cos</div>
-            <div class="button function" data-value="cosh">cosh</div>
-            <div class="button function" data-value="tan">tan</div>
-            <div class="button function" data-value="tanh">tanh</div>
-            <div class="button digit" data-value="1">1</div>
-            <div class="button digit" data-value="2">2</div>
-            <div class="button digit" data-value="3">3</div>
-            <div class="button operator" data-value="-">-</div>
-
-            <!-- Row 5: Deg/Rad/Grad (span 3), Inv, sin, sinh, 0 (span 2), ., =, + (11 columns) -->
-            <div class="radian-mode-buttons col-span-3">
-                <div class="radian-mode-button active" data-mode="deg">Deg</div>
-                <div class="radian-mode-button" data-mode="rad">Rad</div>
-                <div class="radian-mode-button" data-mode="grad">Grad</div>
+                    <div class="radian-mode-buttons">
+                        <div class="radian-mode-button active" data-mode="deg">Deg</div>
+                        <div class="radian-mode-button" data-mode="rad">Rad</div>
+                        <div class="radian-mode-button" data-mode="grad">Grad</div>
+                    </div>
+                    <div class="button function" data-value="inv">Inv</div>
+                    <div class="button function" data-value="sin">sin</div>
+                    <div class="button function" data-value="sinh">sinh</div>
+                    <div class="button col-span-2 digit" data-value="0">0</div>
+                    <div class="button dot" data-value=".">.</div>
+                    <div class="button equals" data-value="=">=</div>
+                    <div class="button operator" data-value="+">+</div>
+                </div>
             </div>
-            <div class="button function" data-value="inv">Inv</div>
-            <div class="button function" data-value="sin">sin</div>
-            <div class="button function" data-value="sinh">sinh</div>
-            <div class="button col-span-2 digit" data-value="0">0</div>
-            <div class="button dot" data-value=".">.</div>
-            <div class="button equals" data-value="=">=</div>
-            <div class="button operator" data-value="+">+</div>
         </div>
     </div>
 
-    <!-- Modal for custom alerts/confirms -->
     <div id="modal-overlay" class="modal-overlay hidden">
         <div class="modal-content">
             <p id="modal-message"></p>
             <div class="modal-buttons">
-                <button id="modal-confirm" class="modal-button confirm hidden">OK</button>
-                <button id="modal-cancel" class="modal-button cancel hidden">Cancel</button>
+                 <button id="modal-confirm" class="modal-button">OK</button>
             </div>
         </div>
     </div>
@@ -417,19 +420,16 @@
         const inputHistory = document.getElementById('input-history');
         const basicButtonGrid = document.getElementById('basic-button-grid');
         const scientificButtonGrid = document.getElementById('scientific-button-grid');
-        const modeTabs = document.querySelectorAll('.mode-tab');
         const basicTab = document.getElementById('basic-tab');
         const scientificTab = document.getElementById('scientific-tab');
         const radianModeButtons = document.querySelectorAll('.radian-mode-button');
-        const copyButton = document.getElementById('copy-button');
         const digitGroupingButton = document.querySelector('.digit-grouping');
+        const buttonGridsContainer = document.getElementById('button-grids-container');
 
         // Modal elements
         const modalOverlay = document.getElementById('modal-overlay');
         const modalMessage = document.getElementById('modal-message');
         const modalConfirmBtn = document.getElementById('modal-confirm');
-        const modalCancelBtn = document.getElementById('modal-cancel');
-
 
         // Calculator State Variables
         let currentInput = '0';
@@ -438,25 +438,17 @@
         let equalsPressed = false;
         let memory = 0;
         let angleMode = 'deg'; // 'deg', 'rad', 'grad'
-        let scientificMode = false; // Initial state is basic mode
         let digitGroupingEnabled = false;
 
         // Function to display custom modal
         function showModal(message) {
             modalMessage.textContent = message;
             modalOverlay.classList.remove('hidden');
-            modalConfirmBtn.classList.remove('hidden');
-            modalCancelBtn.classList.add('hidden'); // Only 'OK' for alerts
-
-            return new Promise(resolve => {
-                modalConfirmBtn.onclick = () => {
-                    modalOverlay.classList.add('hidden');
-                    resolve(true);
-                };
-            });
+            modalConfirmBtn.onclick = () => {
+                modalOverlay.classList.add('hidden');
+            };
         }
 
-        // Function to update the display
         function updateDisplay() {
             let displayedValue = currentInput;
             if (digitGroupingEnabled) {
@@ -465,62 +457,47 @@
                 displayedValue = parts.join('.');
             }
             display.textContent = displayedValue;
-            inputHistory.textContent = previousInput + (operator ? ` ${operator}` : '');
+            let historyOperator = operator ? ` ${operator.replace('*', '×').replace('/', '÷').replace('x^y','^')}` : '';
+            inputHistory.textContent = previousInput + historyOperator;
         }
 
-        // Function to handle digit grouping
         function toggleDigitGrouping() {
             digitGroupingEnabled = !digitGroupingEnabled;
-            digitGroupingButton.classList.toggle('active', digitGroupingEnabled);
+            digitGroupingButton.style.filter = digitGroupingEnabled ? 'brightness(0.9)' : 'brightness(1)';
             updateDisplay();
         }
 
-        // Function to remove digit grouping for calculations
         function removeGrouping(numberString) {
-            return numberString.replace(/,/g, '');
+            return String(numberString).replace(/,/g, '');
         }
 
-        // Angle conversion functions
-        function degToRad(degrees) {
-            return degrees * (Math.PI / 180);
-        }
-
-        function gradToRad(grads) {
-            return grads * (Math.PI / 200);
-        }
-
-        // Calculation logic
         function calculate() {
             let result;
-            const prev = parseFloat(removeGrouping(previousInput));
-            const current = parseFloat(removeGrouping(currentInput));
-
+            let prev = parseFloat(removeGrouping(previousInput));
+            let current = parseFloat(removeGrouping(currentInput));
             if (isNaN(prev) || isNaN(current)) return;
-
-            switch (operator) {
-                case '+': result = prev + current; break;
-                case '-': result = prev - current; break;
-                case '*': result = prev * current; break;
-                case '/':
-                    if (current === 0) {
-                        showModal('Cannot divide by zero!');
-                        clearAll();
-                        return;
-                    }
-                    result = prev / current;
-                    break;
-                case '%': result = prev * (current / 100); break;
-                case '^': result = Math.pow(prev, current); break;
-                default: return;
+            
+            if (operator === '%') {
+                 result = prev * (current / 100);
+            } else {
+                switch (operator) {
+                    case '+': result = prev + current; break;
+                    case '-': result = prev - current; break;
+                    case '*': result = prev * current; break;
+                    case '/':
+                        if (current === 0) { showModal('Cannot divide by zero!'); clearAll(); return; }
+                        result = prev / current; break;
+                    case 'x^y': result = Math.pow(prev, current); break;
+                    default: return;
+                }
             }
-
-            currentInput = result.toString();
-            previousInput = '';
+            currentInput = String(result);
             operator = null;
             equalsPressed = true;
+            updateDisplay();
+            previousInput = ''; // Clear history after calculation
         }
 
-        // Clear functions
         function clearAll() {
             currentInput = '0';
             previousInput = '';
@@ -531,25 +508,22 @@
 
         function clearEntry() {
             currentInput = '0';
+            equalsPressed = false;
             updateDisplay();
         }
 
         function backspace() {
-            currentInput = currentInput.slice(0, -1);
-            if (currentInput === '') {
+            if (equalsPressed) { clearAll(); return; }
+            currentInput = removeGrouping(currentInput).slice(0, -1);
+            if (currentInput === '' || currentInput === '-') {
                 currentInput = '0';
             }
             updateDisplay();
         }
 
-        // Handle scientific and special functions
         function handleFunction(func) {
             let val = parseFloat(removeGrouping(currentInput));
-            if (isNaN(val) && func !== 'pi' && func !== 'e') {
-                 showModal('Invalid input for function!');
-                 return;
-            }
-
+            if (isNaN(val) && !['pi', 'e'].includes(func)) { showModal('Invalid input for function!'); return; }
             let result;
             switch (func) {
                 case '1/x': result = 1 / val; break;
@@ -557,208 +531,114 @@
                 case 'cbrt': result = Math.cbrt(val); break;
                 case 'x^2': result = val * val; break;
                 case 'x^3': result = val * val * val; break;
-                case 'x^y':
-                    previousInput = currentInput;
-                    operator = '^';
-                    currentInput = '0';
-                    updateDisplay();
-                    return;
                 case 'pi': result = Math.PI; break;
                 case 'exp': result = Math.exp(val); break;
                 case 'ln': result = Math.log(val); break;
                 case 'log': result = Math.log10(val); break;
                 case '!':
-                    if (val < 0 || !Number.isInteger(val)) {
-                        showModal('Factorial is only for non-negative integers.');
-                        return;
-                    }
-                    result = factorial(val);
-                    break;
+                    if (val < 0 || !Number.isInteger(val)) { showModal('Factorial is for non-negative integers only.'); return; }
+                    result = factorial(val); break;
                 case 'ex': result = Math.exp(val); break;
                 case 'e': result = Math.E; break;
-                case 'sin':
-                    result = Math.sin(convertAngle(val));
-                    break;
-                case 'cos':
-                    result = Math.cos(convertAngle(val));
-                    break;
-                case 'tan':
-                    result = Math.tan(convertAngle(val));
-                    break;
-                case 'sinh':
-                    result = Math.sinh(val);
-                    break;
-                case 'cosh':
-                    result = Math.cosh(val);
-                    break;
-                case 'tanh':
-                    result = Math.tanh(val);
-                    break;
-                case 'inv':
-                    showModal('Inverse function selected. Click a trigonometric function (e.g., sin, cos) next.');
-                    return;
-                case '(':
-                    currentInput += '(';
-                    break;
-                case ')':
-                    currentInput += ')';
-                    break;
+                case 'sin': result = Math.sin(convertAngle(val)); break;
+                case 'cos': result = Math.cos(convertAngle(val)); break;
+                case 'tan': result = Math.tan(convertAngle(val)); break;
+                case 'sinh': result = Math.sinh(val); break;
+                case 'cosh': result = Math.cosh(val); break;
+                case 'tanh': result = Math.tanh(val); break;
+                case 'inv': showModal('Inverse function not implemented.'); return;
                 default: return;
             }
-            currentInput = result.toString();
+            currentInput = String(result);
             equalsPressed = true;
             updateDisplay();
         }
+        
+        function handleOperator(op) {
+             if (operator && previousInput !== '' && !equalsPressed) calculate();
+             previousInput = removeGrouping(currentInput);
+             operator = op;
+             equalsPressed = true; // Set to true to allow new number input
+             updateDisplay();
+        }
 
         function convertAngle(value) {
-            switch (angleMode) {
-                case 'deg': return degToRad(value);
-                case 'grad': return gradToRad(value);
-                case 'rad': return value;
-                default: return value;
-            }
+            if (angleMode === 'deg') return value * (Math.PI / 180);
+            if (angleMode === 'grad') return value * (Math.PI / 200);
+            return value; // Radian
         }
 
         function factorial(n) {
+            if (n > 170) return Infinity;
             if (n === 0 || n === 1) return 1;
-            if (n < 0 || !Number.isInteger(n)) return NaN;
             let res = 1;
-            for (let i = n; i > 1; i--) {
-                res *= i;
-            }
+            for (let i = n; i > 1; i--) res *= i;
             return res;
         }
 
-        // Handle memory operations
         function handleMemory(memFunc) {
+            let currentValue = parseFloat(removeGrouping(currentInput));
             switch (memFunc) {
-                case 'mc':
-                    memory = 0;
-                    showModal('Memory Cleared.');
-                    break;
-                case 'mr':
-                    currentInput = memory.toString();
-                    equalsPressed = true;
-                    showModal('Memory Recalled.');
-                    break;
-                case 'ms':
-                    memory = parseFloat(removeGrouping(currentInput));
-                    showModal('Value Stored in Memory.');
-                    break;
-                case 'm+':
-                    memory += parseFloat(removeGrouping(currentInput));
-                    showModal('Value Added to Memory.');
-                    break;
-                case 'm-':
-                    memory -= parseFloat(removeGrouping(currentInput));
-                    showModal('Value Subtracted from Memory.');
-                    break;
-                case 'pm':
-                    currentInput = (parseFloat(removeGrouping(currentInput)) * -1).toString();
-                    break;
-                default:
-                    break;
+                case 'mc': memory = 0; showModal('Memory Cleared.'); break;
+                case 'mr': currentInput = String(memory); equalsPressed = true; break;
+                case 'ms': memory = currentValue; showModal('Value Stored in Memory.'); break;
+                case 'm+': memory += currentValue; showModal('Value Added to Memory.'); break;
+                case 'm-': memory -= currentValue; showModal('Value Subtracted from Memory.'); break;
+                case 'pm': currentInput = String(currentValue * -1); break;
             }
             updateDisplay();
         }
+        
+        buttonGridsContainer.addEventListener('click', (event) => {
+            const button = event.target.closest('.button, .radian-mode-button');
+            if (!button) return;
 
-        // Master event listener for all buttons
-        document.addEventListener('click', (event) => {
-            const button = event.target.closest('.button');
-            if (button) {
-                const value = button.dataset.value;
-                const classList = button.classList;
+            const value = button.dataset.value;
+            const classList = button.classList;
 
-                if (classList.contains('digit') || classList.contains('dot')) {
-                    if (equalsPressed || currentInput === '0') {
-                        currentInput = value === '.' ? '0.' : value;
-                        equalsPressed = false;
-                    } else if (value === '.' && currentInput.includes('.')) {
-                        // Do nothing if dot already exists
-                    } else {
-                        currentInput += value;
-                    }
-                } else if (classList.contains('operator')) {
-                    if (operator && previousInput !== '') {
-                        calculate();
-                        previousInput = currentInput;
-                    } else if (currentInput !== '0') {
-                        previousInput = currentInput;
-                    }
-                    operator = value;
-                    currentInput = '0';
+            if (classList.contains('digit')) {
+                if (equalsPressed || currentInput === '0') {
+                    currentInput = value;
                     equalsPressed = false;
-                } else if (classList.contains('equals')) {
-                    if (operator && previousInput !== '') {
-                        calculate();
-                    }
-                } else if (classList.contains('clear')) {
-                    clearAll();
-                } else if (classList.contains('ce')) {
-                    clearEntry();
-                } else if (classList.contains('back-btn')) {
-                    backspace();
-                } else if (classList.contains('function')) {
-                    handleFunction(value);
-                } else if (classList.contains('memory')) {
-                    handleMemory(value);
+                } else {
+                    currentInput += value;
                 }
-                updateDisplay();
+            } else if (classList.contains('dot')) {
+                 if (equalsPressed) { currentInput = '0.'; equalsPressed = false; }
+                 else if (!currentInput.includes('.')) currentInput += '.';
+            } else if (classList.contains('operator') || value === 'x^y') {
+                handleOperator(value);
+            } else if (classList.contains('equals')) {
+                if (operator && previousInput !== '') calculate();
+            } else if (value === 'c') {
+                clearAll();
+            } else if (value === 'ce') {
+                clearEntry();
+            } else if (value === 'back') {
+                backspace();
+            } else if (classList.contains('function')) {
+                handleFunction(value);
+            } else if (classList.contains('memory')) {
+                handleMemory(value);
+            } else if (classList.contains('radian-mode-button')) {
+                 radianModeButtons.forEach(btn => btn.classList.remove('active'));
+                 button.classList.add('active');
+                 angleMode = button.dataset.mode;
             }
-        });
-
-
-        // Event listeners for mode tabs
-        basicTab.addEventListener('click', () => {
-            scientificMode = false;
-            basicTab.classList.add('active');
-            scientificTab.classList.remove('active');
-            basicButtonGrid.classList.remove('hidden');
-            scientificButtonGrid.classList.add('hidden');
             updateDisplay();
         });
 
-        scientificTab.addEventListener('click', () => {
-            scientificMode = true;
-            scientificTab.classList.add('active');
-            basicTab.classList.remove('active');
-            scientificButtonGrid.classList.remove('hidden');
-            basicButtonGrid.classList.add('hidden');
-            updateDisplay();
-        });
-
-        // Event listeners for radian mode buttons
-        radianModeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                radianModeButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                angleMode = button.dataset.mode;
+        document.getElementById('copy-button').addEventListener('click', () => {
+             navigator.clipboard.writeText(display.textContent).then(() => {
+                showModal('Copied to clipboard!');
+            }, () => {
+                showModal('Failed to copy.');
             });
         });
-
-        // Copy button functionality
-        copyButton.addEventListener('click', async () => {
-            try {
-                const textArea = document.createElement('textarea');
-                textArea.value = display.textContent;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showModal('Copied to clipboard!');
-            } catch (err) {
-                console.error('Failed to copy text: ', err);
-                showModal('Failed to copy to clipboard.');
-            }
-        });
-
-        // Digit Grouping button functionality
+        
         digitGroupingButton.addEventListener('click', toggleDigitGrouping);
-
-        // Initial setup (starts in basic mode)
-        basicButtonGrid.classList.remove('hidden');
-        scientificButtonGrid.classList.add('hidden');
-        updateDisplay();
+        updateDisplay(); // Initial call
     </script>
 </body>
 </html>
+```
